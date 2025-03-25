@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { UltravoxSession } from "ultravox-client";
+import { UltravoxSession, UltravoxSessionStatus } from "ultravox-client";
 import { ScaleLoader } from "react-spinners";
 import { useEffect, useState } from "react";
 
@@ -13,11 +13,7 @@ export default function Home() {
     setSession(new UltravoxSession());
   }, []);
 
-  const {
-    mutate: createCall,
-    data: agentData,
-    isPending,
-  } = useMutation<{ callId: string; joinUrl: string }>({
+  const { mutate: createCall, isPending } = useMutation({
     mutationFn: async () => {
       const agentCall = await fetch("/api/agent", {
         method: "POST",
@@ -28,30 +24,27 @@ export default function Home() {
 
       const agentCallData = await agentCall.json();
 
-      return agentCallData;
+      session?.joinCall(agentCallData.joinUrl);
     },
     retry: false,
   });
 
-  const isCallActive = agentData?.callId && session;
-
+  const loading = isPending || !session?.status;
   return (
     <div className="w-dvw h-dvh flex flex-col items-center justify-center font-[family-name:var(--font-geist-sans)]">
-      {isPending && <ScaleLoader color="#3f3f46" width={3} height={25} />}
+      {loading && (
+        <ScaleLoader color="#3f3f46" width={3} height={25} className="pb-2" />
+      )}
 
-      <span className="capitalize">Status: {session?.status}</span>
+      {session?.status && (
+        <span className="capitalize">Status: {session?.status}</span>
+      )}
 
       <div className="flex items-center justify-center gap-2 text-center mt-3">
-        {!isCallActive && (
+        {session?.status === UltravoxSessionStatus.DISCONNECTED ? (
           <Button onClick={() => createCall()}>Start call</Button>
-        )}
-        {isCallActive && (
-          <>
-            <Button onClick={() => session.joinCall(agentData.joinUrl)}>
-              Join call
-            </Button>
-            <Button onClick={() => session.leaveCall()}>Leave call</Button>
-          </>
+        ) : (
+          <Button onClick={() => session?.leaveCall()}>Leave call</Button>
         )}
       </div>
     </div>
