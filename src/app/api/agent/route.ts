@@ -1,4 +1,4 @@
-import { agentSystemPrompt } from "@/app/agent/prompt";
+import { agentSystemPrompt } from "@/app/utils/prompt";
 
 if (!process.env.ULTRAVOX_API_KEY) {
   throw new Error("ULTRAVOX_API_KEY is not set");
@@ -28,7 +28,6 @@ export async function POST() {
       transcriptOptional: true,
       initialOutputMedium: "MESSAGE_MEDIUM_VOICE",
       firstSpeakerSettings: {
-        user: {},
         agent: {
           uninterruptible: true,
           text: "Hey, what would you like to build today?",
@@ -45,5 +44,5 @@ export async function POST() {
 
   console.log(result);
 
-  return result.callId;
+  return Response.json({ callId: result.callId, joinUrl: result.joinUrl });
 }
