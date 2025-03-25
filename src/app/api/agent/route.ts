@@ -42,5 +42,7 @@ export async function POST() {
     (response) => response.json(),
   );
 
+  console.log(result);
+
   return Response.json({ callId: result.callId, joinUrl: result.joinUrl });
 }

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { UltravoxSession, UltravoxSessionStatus } from "ultravox-client";
+import { UltravoxSession } from "ultravox-client";
 import { ScaleLoader } from "react-spinners";
 import { useEffect, useState } from "react";
 
@@ -33,17 +33,18 @@ export default function Home() {
     retry: false,
   });
 
-  const isCallActive =
-    agentData?.callId &&
-    session &&
-    session.status !== UltravoxSessionStatus.DISCONNECTED &&
-    session.status !== UltravoxSessionStatus.DISCONNECTING;
+  const isCallActive = agentData?.callId && session;
 
   return (
     <div className="w-dvw h-dvh flex flex-col items-center justify-center font-[family-name:var(--font-geist-sans)]">
       {isPending && <ScaleLoader color="#3f3f46" width={3} height={25} />}
-      <div className="flex items-center justify-center gap-2 text-center">
-        <Button onClick={() => createCall()}>Start call</Button>
+
+      <span className="capitalize">Status: {session?.status}</span>
+
+      <div className="flex items-center justify-center gap-2 text-center mt-3">
+        {!isCallActive && (
+          <Button onClick={() => createCall()}>Start call</Button>
+        )}
         {isCallActive && (
           <>
             <Button onClick={() => session.joinCall(agentData.joinUrl)}>
