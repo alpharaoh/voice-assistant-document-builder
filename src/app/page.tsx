@@ -54,7 +54,12 @@ export default function Home() {
     <div className="w-dvw h-dvh flex flex-col items-center justify-center font-[family-name:var(--font-geist-sans)] bg-zinc-100">
       <div className="flex h-full w-full">
         <div className="h-full flex flex-col justify-between py-20 items-center">
-          <SpeakingVisualizer isSpeaking={isSpeaking} />
+          <div className="flex flex-col items-center gap-3 text-center">
+            <p className="text-lg font-semibold text-cyan-900 font-[family-name:var(--font-geist-mono)]">
+              Robin
+            </p>
+            <SpeakingVisualizer isSpeaking={isSpeaking} />
+          </div>
 
           <div className="flex flex-col items-center gap-2 text-center px-20 mt-10">
             {loading && <ScaleLoader color="#3f3f46" width={3} height={25} />}
