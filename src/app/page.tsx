@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { UltravoxSession, UltravoxSessionStatus } from "ultravox-client";
 import { ScaleLoader } from "react-spinners";
 import { useEffect, useState } from "react";
-import { PhoneOff, Play } from "lucide-react";
+import { PhoneCall, PhoneOff } from "lucide-react";
 import { CallStatusBadge } from "@/components/call-status-badge";
 
 export default function Home() {
@@ -43,12 +43,11 @@ export default function Home() {
       <div className="flex items-center justify-center gap-2 text-center mt-3">
         {session?.status === UltravoxSessionStatus.DISCONNECTED ? (
           <Button onClick={() => createCall()}>
-            <Play fill="white" size={10} /> Start call
+            <PhoneCall /> Start call
           </Button>
         ) : (
-          <Button onClick={() => session?.leaveCall()}>
-            <PhoneOff fill="white" size={10} />
-            Leave call
+          <Button onClick={() => session?.leaveCall()} variant="outline">
+            <PhoneOff /> End call
           </Button>
         )}
       </div>
