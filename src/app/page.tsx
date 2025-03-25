@@ -6,6 +6,7 @@ import { UltravoxSession, UltravoxSessionStatus } from "ultravox-client";
 import { ScaleLoader } from "react-spinners";
 import { useEffect, useState } from "react";
 import { PhoneOff, Play } from "lucide-react";
+import { CallStatusBadge } from "@/components/call-status-badge";
 
 export default function Home() {
   const [session, setSession] = useState<UltravoxSession>();
@@ -37,9 +38,7 @@ export default function Home() {
         <ScaleLoader color="#3f3f46" width={3} height={25} className="pb-2" />
       )}
 
-      {session?.status && (
-        <span className="capitalize">Status: {session?.status}</span>
-      )}
+      {session?.status && <CallStatusBadge status={session.status} />}
 
       <div className="flex items-center justify-center gap-2 text-center mt-3">
         {session?.status === UltravoxSessionStatus.DISCONNECTED ? (
