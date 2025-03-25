@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { UltravoxSession, UltravoxSessionStatus } from "ultravox-client";
 import { ScaleLoader } from "react-spinners";
 import { useEffect, useState } from "react";
-import { PhoneCall, PhoneOff } from "lucide-react";
+import { Pause, PhoneCall, PhoneOff } from "lucide-react";
 import { CallStatusBadge } from "@/components/call-status-badge";
 import { Editor } from "@/components/editor";
 import { Card } from "@/components/ui/card";

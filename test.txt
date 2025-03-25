@@ -1,0 +1,1 @@
+We are building a workflow that takes a legal document as input, extracts the date, short description, and parties involved using NLP, and sends a Slack message with the extracted information.

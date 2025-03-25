@@ -1,11 +1,8 @@
 import { agentSystemPrompt } from "@/app/utils/prompt";
+import { editDocumentTool } from "@/app/utils/tools";
 
 if (!process.env.ULTRAVOX_API_KEY) {
   throw new Error("ULTRAVOX_API_KEY is not set");
-}
-
-export async function GET() {
-  return Response.json({ data: "hello" });
 }
 
 export async function POST() {
@@ -23,7 +20,7 @@ export async function POST() {
       initialMessages: [],
       timeExceededMessage:
         "Hey, I'm sorry, but I've run out of time to respond to your request. Please try again later.",
-      selectedTools: [], // TODO(Akaam): Add tools
+      selectedTools: [editDocumentTool],
       recordingEnabled: true,
       transcriptOptional: true,
       initialOutputMedium: "MESSAGE_MEDIUM_VOICE",
