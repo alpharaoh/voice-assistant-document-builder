@@ -11,13 +11,11 @@ const extensions = [StarterKit, TagExtension, SlackMessageExtension];
 
 const content = `
 <div>
-  <p>Build a workflow that takes a legal document as input, extracts the date, short description, and parties involved.
+  <p>Build a workflow that takes a legal document as input, extracts the date, short description, and parties involved. 
 
   <tag>@input</tag>
 
   <tag>@generation</tag>
-
-  <br/>
 
   <p>Given the generation, extract the key bits of information as mentioned initially and send a slack message with the extracted information:</p>
 

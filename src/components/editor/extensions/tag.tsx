@@ -6,8 +6,10 @@ import React from "react";
 
 export const TagExtension = Node.create({
   name: "tag",
-  group: "block",
+  group: "inline",
   content: "inline*",
+
+  inline: true,
 
   parseHTML() {
     return [{ tag: "tag" }];
@@ -25,7 +27,7 @@ export const TagExtension = Node.create({
 const Component = () => {
   return (
     <NodeViewWrapper>
-      <Badge>
+      <Badge variant="secondary" className="bg-cyan-100 text-cyan-800 text-sm">
         <NodeViewContent className="content is-editable" />
       </Badge>
     </NodeViewWrapper>
