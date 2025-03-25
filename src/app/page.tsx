@@ -15,8 +15,8 @@ export default function Home() {
 
   const {
     mutate: createCall,
+    data: agentData,
     isPending,
-    data,
   } = useMutation<{ callId: string; joinUrl: string }>({
     mutationFn: async () => {
       const agentCall = await fetch("/api/agent", {
@@ -34,7 +34,7 @@ export default function Home() {
   });
 
   const isCallActive =
-    data?.callId &&
+    agentData?.callId &&
     session &&
     session.status !== UltravoxSessionStatus.DISCONNECTED &&
     session.status !== UltravoxSessionStatus.DISCONNECTING;
@@ -46,7 +46,7 @@ export default function Home() {
         <Button onClick={() => createCall()}>Start call</Button>
         {isCallActive && (
           <>
-            <Button onClick={() => session.joinCall(data.joinUrl)}>
+            <Button onClick={() => session.joinCall(agentData.joinUrl)}>
               Join call
             </Button>
             <Button onClick={() => session.leaveCall()}>Leave call</Button>
