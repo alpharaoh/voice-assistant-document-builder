@@ -4,17 +4,17 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
 import React from "react";
 
-export const UserInputExtension = Node.create({
-  name: "user-input",
+export const TagExtension = Node.create({
+  name: "tag",
   group: "block",
   content: "inline*",
 
   parseHTML() {
-    return [{ tag: "user-input" }];
+    return [{ tag: "tag" }];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["user-input", mergeAttributes(HTMLAttributes), 0];
+    return ["tag", mergeAttributes(HTMLAttributes), 0];
   },
 
   addNodeView() {
@@ -25,8 +25,9 @@ export const UserInputExtension = Node.create({
 const Component = () => {
   return (
     <NodeViewWrapper>
-      <Badge>@input</Badge>
-      <NodeViewContent className="content is-editable" />
+      <Badge>
+        <NodeViewContent className="content is-editable" />
+      </Badge>
     </NodeViewWrapper>
   );
 };
