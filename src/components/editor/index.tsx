@@ -5,8 +5,7 @@ import { TagExtension } from "@/components/editor/extensions/tag";
 
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { useEffect } from "react";
 
 // define your extension array
 const extensions = [StarterKit, TagExtension, SlackMessageExtension];
@@ -14,9 +13,6 @@ const extensions = [StarterKit, TagExtension, SlackMessageExtension];
 const content = `<div></div>`;
 
 export const Editor = () => {
-  const [fileContents, setFileContents] = useState("");
-  const [lastUpdated, setLastUpdated] = useState("");
-
   const editor = useEditor({
     content,
     extensions,
@@ -24,28 +20,26 @@ export const Editor = () => {
   });
 
   useEffect(() => {
-    // Establish socket connection
-    const socket = io({
-      path: "http://localhost:3000/api/document",
-      addTrailingSlash: false,
-    });
+    const eventSource = new EventSource("/api/document");
 
-    // Listen for file updates
-    socket.on(
-      "file-updated",
-      (data: { contents: string; timestamp: string }) => {
-        setFileContents(data.contents);
-        setLastUpdated(data.timestamp);
-      },
-    );
-
-    // Cleanup on unmount
-    return () => {
-      socket.disconnect();
+    eventSource.onmessage = (event) => {
+      const data = event.data;
+      if (data) {
+        editor?.commands.setContent(data);
+      } else if (data.error) {
+        editor?.commands.setContent("An error occurred");
+      }
     };
-  }, []);
 
-  console.log(fileContents, lastUpdated);
+    eventSource.onerror = (error) => {
+      console.error("EventSource error:", error);
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [editor]);
 
   return <EditorContent editor={editor} />;
 };

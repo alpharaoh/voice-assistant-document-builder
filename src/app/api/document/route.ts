@@ -1,80 +1,41 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { Server } from "socket.io";
-import { Server as HttpServer } from "http";
-import chokidar from "chokidar";
-import fs from "fs/promises";
+import { statSync, watchFile } from "fs";
 import path from "path";
+import fs from "fs/promises";
 
-// Prevent multiple socket server creation
-const initSocketServer = (httpServer: HttpServer) => {
-  const io = new Server(httpServer, {
-    cors: {
-      origin: "*", // Be more specific in production
-      methods: ["GET", "POST"],
+const FILE_PATH = path.join(process.cwd(), "test.txt");
+
+export async function GET() {
+  if (!statSync(FILE_PATH).isFile()) {
+    return new Response("Invalid file path", { status: 400 });
+  }
+
+  const controller = new ReadableStream({
+    async start(controller) {
+      watchFile(FILE_PATH, { interval: 100 }, async () => {
+        const fileContents = await getFileContents();
+        controller.enqueue(`data: ${fileContents}\n\n`);
+      });
+
+      const fileContents = await getFileContents();
+
+      controller.enqueue(`data: ${fileContents}\n\n`);
     },
   });
 
-  const FILE_PATH = path.join(process.cwd(), "test.txt");
-
-  console.log(FILE_PATH);
-
-  const watcher = chokidar.watch(FILE_PATH, {
-    persistent: true,
-    ignoreInitial: false,
+  return new Response(controller, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    },
   });
-
-  watcher.on("change", async () => {
-    try {
-      const fileContents = await fs.readFile(FILE_PATH, "utf8");
-      io.emit("file-updated", {
-        contents: fileContents,
-        timestamp: new Date().toISOString(),
-      });
-    } catch (error) {
-      console.error("File read error:", error);
-    }
-  });
-
-  io.on("connection", (socket) => {
-    console.log("Client connected");
-
-    // Send initial file contents on connection
-    const sendInitialContents = async () => {
-      try {
-        const initialContents = await fs.readFile(FILE_PATH, "utf8");
-        socket.emit("file-updated", {
-          contents: initialContents,
-          timestamp: new Date().toISOString(),
-        });
-      } catch (error) {
-        console.error("Initial file read error:", error);
-      }
-    };
-
-    sendInitialContents();
-
-    socket.on("disconnect", () => {
-      console.log("Client disconnected");
-    });
-  });
-
-  return io;
-};
-
-// Global variable to store the socket server
-let socketServerInitialized = false;
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Ensure HTTP server is created only once
-  if (!socketServerInitialized) {
-    const httpServer = res.socket.server.httpServer;
-    initSocketServer(httpServer);
-    socketServerInitialized = true;
-
-    // Mark the socket as handled
-    (res.socket as any).server.io = true;
-  }
-
-  // End the response
-  res.end();
 }
+
+const getFileContents = async () => {
+  try {
+    return await fs.readFile(FILE_PATH, "utf8");
+  } catch (error) {
+    console.error("File read error:", error);
+    return "";
+  }
+};
