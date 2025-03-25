@@ -25,7 +25,6 @@ export async function POST() {
         "Hey, I'm sorry, but I've run out of time to respond to your request. Please try again later.",
       selectedTools: [], // TODO(Akaam): Add tools
       recordingEnabled: true,
-      firstSpeaker: "FIRST_SPEAKER_AGENT",
       transcriptOptional: true,
       initialOutputMedium: "MESSAGE_MEDIUM_VOICE",
       firstSpeakerSettings: {

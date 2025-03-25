@@ -18,13 +18,14 @@ export default function Home() {
 
       return await agentCall.json();
     },
+    retry: false,
   });
 
   console.log(callId);
 
   return (
     <div className="w-dvw h-dvh flex items-center justify-center font-[family-name:var(--font-geist-sans)]">
-      hello {callId}
+      {isLoading ? "Loading..." : undefined}
       <button onClick={() => session.leaveCall()}>Leave</button>
     </div>
   );
