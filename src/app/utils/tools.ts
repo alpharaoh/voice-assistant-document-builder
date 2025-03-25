@@ -17,7 +17,7 @@ export const editDocumentTool = {
       },
     ],
     http: {
-      baseUrlPattern: `${ngrokUrl}/api/document`,
+      baseUrlPattern: `${ngrokUrl}/api/tools/document`,
       httpMethod: "POST",
     },
   },
